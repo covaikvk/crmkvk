@@ -547,17 +547,18 @@ export default function FoodsItems() {
               <option value="Non-Veg">Non-Veg</option>
             </select>
             <input type="file" accept="image/*" onChange={handleImageChange} />
-            {formData.image_url && (
-              <img
-                src={formData.image_url}
-                alt="Preview"
-                style={{
-                  width: "100%",
-                  borderRadius: "8px",
-                  marginTop: "10px",
-                }}
-              />
-            )}
+           {formData.image_url && (
+  <img
+    src={formData.image_url}
+    alt="Preview"
+    style={{
+      width: "100%",
+      borderRadius: "8px",
+      marginTop: "10px",
+    }}
+  />
+)}
+
             <div style={styles.popupButtons}>
               <button
                 onClick={handleSave}
