@@ -15,6 +15,7 @@ import QuotationPage from "./pages/QuotationPage/QuotationPage";
 import Orders from "./pages/Orders/Orders";
 import Table2Page from "./pages/WeeklyMenu/Table2Page"; 
 import Videos from "./pages/videos/Videos";
+import WeeklyOrders from "./pages/weeklyorders/weeklyorders";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/foodlist" element={<FoodList />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/videos" element={<Videos />} />
+            <Route path="/weekly-orders" element={<WeeklyOrders />} />
             <Route path="/quotations" element={<QuotationPage />} />
             <Route path="/weekly menu" element={<WeeklyMenu />} />
             <Route path="/weekly-details/:menuId" element={<Table2Page />} />

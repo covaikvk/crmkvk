@@ -62,11 +62,12 @@ export default function Sidebar() {
 
 
 
-       <li style={styles.menuItem}>
-  <Link to="/weekly menu orders" style={styles.link}>
+   <li style={styles.menuItem}>
+  <Link to="/weekly-orders" style={styles.link}>
     <FaConciergeBell style={styles.icon} /> Weekly Menu Orders
   </Link>
 </li>
+
         {/* Our Food Services */}
         <li style={styles.menuItem}>
           <Link to="/ourfoodservices" style={styles.link}>
