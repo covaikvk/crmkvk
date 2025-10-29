@@ -14,7 +14,7 @@ export default function WeeklyOrders() {
         const res = await axios.get("https://kvk-backend.onrender.com/api/customizemenu");
         setOrders(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching orders:", err.response ? err.response.data : err.message);
         setError("Failed to load weekly orders");
       } finally {
         setLoading(false);
@@ -90,11 +90,29 @@ export default function WeeklyOrders() {
                           {day.charAt(0).toUpperCase() + day.slice(1)}
                         </strong>
                         <div className="day-items">
-                          {Object.keys(order[day] || {}).length > 0 ? (
+                          {order[day] && Object.keys(order[day]).length > 0 ? (
                             Object.entries(order[day]).map(([key, val]) => (
                               <div key={key} className="menu-item">
                                 <span className="menu-key">{key}:</span>{" "}
-                                <span className="menu-value">{val}</span>
+                                {typeof val === "object" && val !== null ? (
+                                  <div className="menu-value">
+                                    {val.meal && (
+                                      <div>
+                                        <b>Meal:</b> {val.meal}
+                                      </div>
+                                    )}
+                                    {val.items && (
+                                      <div>
+                                        <b>Items:</b>{" "}
+                                        {Array.isArray(val.items)
+                                          ? val.items.join(", ")
+                                          : val.items}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="menu-value">{val}</span>
+                                )}
                               </div>
                             ))
                           ) : (
