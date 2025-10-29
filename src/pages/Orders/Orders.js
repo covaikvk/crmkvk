@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./Orders.css";
+import { FaUser, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { MdShoppingBag } from "react-icons/md";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch all orders
+  // Fetch all orders
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const res = await axios.get("https://kvk-backend.onrender.com/api/orders");
       setOrders(res.data);
-      setLoading(false);
     } catch (err) {
       console.error("Error fetching orders:", err);
+      alert("Failed to load orders (check console/network).");
+    } finally {
       setLoading(false);
     }
   };
@@ -22,190 +26,154 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  // ✅ Update order status (Confirm)
+  // Update Order Status
   const updateOrderStatus = async (orderId, status) => {
     try {
       await axios.put(`https://kvk-backend.onrender.com/api/orders/${orderId}`, {
         order_status: status,
       });
       setOrders((prev) =>
-        prev.map((order) =>
-          order.id === orderId ? { ...order, order_status: status } : order
-        )
+        prev.map((o) => (o.id === orderId ? { ...o, order_status: status } : o))
       );
-      alert(`✅ Order marked as ${status}`);
     } catch (err) {
-      console.error("Error updating order status:", err);
-      alert("❌ Failed to update order status");
+      console.error("Error updating order:", err);
+      alert("Failed to update order status.");
     }
   };
 
-  // ✅ Update payment status (Mark as Paid)
+  // Update Payment Status
   const updatePaymentStatus = async (orderId, paymentStatus) => {
     try {
       await axios.put(`https://kvk-backend.onrender.com/api/orders/${orderId}`, {
         payment_status: paymentStatus,
       });
       setOrders((prev) =>
-        prev.map((order) =>
-          order.id === orderId
-            ? { ...order, payment_status: paymentStatus }
-            : order
-        )
+        prev.map((o) => (o.id === orderId ? { ...o, payment_status: paymentStatus } : o))
       );
-      alert(`💰 Payment marked as ${paymentStatus}`);
     } catch (err) {
-      console.error("Error updating payment status:", err);
-      alert("❌ Failed to update payment status");
+      console.error("Error updating payment:", err);
+      alert("Failed to update payment status.");
     }
   };
 
   if (loading)
     return (
-      <p style={{ marginLeft: "270px", padding: "20px", fontFamily: "Arial" }}>
-        Loading orders...
-      </p>
+      <div className="orders-loader">
+        <div className="orders-spinner" />
+        <p>Loading orders...</p>
+      </div>
     );
 
   return (
-    <div
-      style={{
-        marginLeft: "270px",
-        padding: "20px",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <h1 style={{ marginBottom: "20px", color: "#145a32" }}>Orders</h1>
+    <div className="orders-container">
+      <h1 className="orders-title">
+        <MdShoppingBag className="title-icon" /> Orders Management
+      </h1>
 
       {orders.length === 0 ? (
-        <p>No orders found</p>
+        <p className="empty-state">No orders found.</p>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={thStyle}>ID</th>
-              <th style={thStyle}>User</th>
-              <th style={thStyle}>Phone</th>
-              <th style={thStyle}>Address</th>
-              <th style={thStyle}>Total</th>
-              <th style={thStyle}>Order Status</th>
-              <th style={thStyle}>Payment Status</th>
-              <th style={thStyle}>Actions</th>
-            </tr>
-          </thead>
+        <div className="orders-grid">
+          {orders.map((order) => {
+            let parsedItems = [];
+            try {
+              parsedItems =
+                typeof order.items === "string" ? JSON.parse(order.items) : order.items || [];
+            } catch {
+              parsedItems = [];
+            }
 
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td style={tdStyleCenter}>{order.id}</td>
-                <td style={tdStyle}>{order.user_name}</td>
-                <td style={tdStyle}>{order.user_phone}</td>
-                <td style={tdStyle}>
-                  {order.address_1}, {order.address_2 ? order.address_2 + ", " : ""}
-                  {order.city}, {order.state}, {order.pincode}
-                </td>
-                <td style={tdStyleCenter}>₹{order.total_amount}</td>
+            return (
+              <div key={order.id} className="order-card">
+                <div className="order-header">
+                  <div className="order-info">
+                    <FaUser className="info-icon" />
+                    <span className="customer-name">{order.name}</span>
+                  </div>
+                  <span className="order-id">#{order.id}</span>
+                </div>
 
-                {/* ✅ Order Status */}
-                <td
-                  style={{
-                    ...tdStyleCenter,
-                    color:
-                      order.order_status === "Confirmed"
-                        ? "green"
-                        : "orange",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {order.order_status}
-                </td>
+                <div className="order-body">
+                  <div className="info-row">
+                    <FaPhone className="icon" />
+                    <span>{order.phone_number}</span>
+                  </div>
 
-                {/* ✅ Payment Status */}
-                <td
-                  style={{
-                    ...tdStyleCenter,
-                    color:
-                      order.payment_status === "Paid" ? "green" : "orange",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {order.payment_status}
-                </td>
+                  <div className="info-row">
+                    <FaMapMarkerAlt className="icon" />
+                    <span>
+                      {order.address_line_1 || order.address_1},{" "}
+                      {order.city}, {order.state}, {order.pincode}
+                    </span>
+                  </div>
 
-                {/* ✅ Action Buttons */}
-                <td style={tdStyleCenter}>
-                  {/* Confirm */}
-                  <button
-                    style={{
-                      ...btnStyle,
-                      background: "#2980b9",
-                      cursor:
-                        order.order_status === "Confirmed"
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
-                    onClick={() => updateOrderStatus(order.id, "Confirmed")}
-                    disabled={order.order_status === "Confirmed"}
-                  >
-                    {order.order_status === "Confirmed"
-                      ? "Confirmed ✅"
-                      : "Confirm"}
-                  </button>
+                  <div className="items-section">
+                    <h4>Items</h4>
+                    {parsedItems.length > 0 ? (
+                      <ul className="items-list">
+                        {parsedItems.map((item, i) => (
+                          <li key={i}>
+                            {item.item_name || item.name} × {item.quantity} — ₹{item.price}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="empty-items">No items</p>
+                    )}
+                  </div>
+                </div>
 
-                  {/* Mark as Paid */}
-                  <button
-                    style={{
-                      ...btnStyle,
-                      background: "#8e44ad",
-                      cursor:
-                        order.payment_status === "Paid"
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
-                    onClick={() => updatePaymentStatus(order.id, "Paid")}
-                    disabled={order.payment_status === "Paid"}
-                  >
-                    {order.payment_status === "Paid"
-                      ? "Paid 💰"
-                      : "Mark Paid"}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                <div className="order-footer">
+                  <div className="status-row">
+                    <strong>Order:</strong>{" "}
+                    <span
+                      className={`status-badge ${
+                        order.order_status === "Confirmed" ? "confirmed" : "pending"
+                      }`}
+                    >
+                      {order.order_status}
+                    </span>
+                  </div>
+                  <div className="status-row">
+                    <strong>Payment:</strong>{" "}
+                    <span
+                      className={`status-badge ${
+                        order.payment_status === "Paid" ? "paid" : "unpaid"
+                      }`}
+                    >
+                      {order.payment_status}
+                    </span>
+                  </div>
+
+                  <div className="total-row">
+                    <strong>Total:</strong> ₹{order.total_amount}
+                  </div>
+
+                  <div className="button-row">
+                    <button
+                      className="btn confirm"
+                      onClick={() => updateOrderStatus(order.id, "Confirmed")}
+                      disabled={order.order_status === "Confirmed"}
+                    >
+                      {order.order_status === "Confirmed" ? "Confirmed ✅" : "Confirm"}
+                    </button>
+
+                    <button
+                      className="btn paid"
+                      onClick={() => updatePaymentStatus(order.id, "Paid")}
+                      disabled={order.payment_status === "Paid"}
+                    >
+                      {order.payment_status === "Paid" ? "Paid 💰" : "Mark Paid"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
-};
-
-// ✅ Inline Styles
-const thStyle = {
-  border: "1px solid #ddd",
-  padding: "10px",
-  background: "#27ae60",
-  color: "#fff",
-  textAlign: "center",
-};
-
-const tdStyle = {
-  border: "1px solid #ddd",
-  padding: "10px",
-};
-
-const tdStyleCenter = {
-  ...tdStyle,
-  textAlign: "center",
-};
-
-const btnStyle = {
-  padding: "6px 10px",
-  margin: "4px",
-  color: "#fff",
-  border: "none",
-  borderRadius: "5px",
-  fontSize: "13px",
-  fontWeight: "bold",
 };
 
 export default Orders;

@@ -1,0 +1,138 @@
+/* Sidebar.css */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(180deg, #0b3d0b 0%, #145a32 100%);
+  /* darker tone at the top for contrast */
+  color: #ecf0f1;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s ease;
+  z-index: 2000; /* above all content */
+}
+
+.logo {
+  margin-bottom: 40px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 2px solid #27ae60;
+  padding-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-item {
+  margin: 10px 0;
+}
+
+.menu-item a {
+  text-decoration: none;
+  color: #ecf0f1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.menu-item a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.icon {
+  font-size: 18px;
+}
+
+/* 📱 Mobile Header */
+.mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: #0b3d0b;
+  color: #fff;
+  padding: 12px 18px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 2100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.mobile-logo {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Dim background overlay when sidebar open (mobile only) */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+  display: none;
+}
+
+.overlay.show {
+  display: block;
+}
+
+/* 📱 Responsive for Tablets and Mobiles */
+@media (max-width: 1024px) {
+  .sidebar {
+    left: -270px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .mobile-header {
+    display: flex;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Smaller devices */
+@media (max-width: 600px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .menu-item a {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+}
