@@ -414,13 +414,18 @@ export default function QuotationPage() {
     doc.text(`Landmark: ${customer.landmark || "N/A"}`, margin, yPos + 36);
 
     // Quotation Details
-    const validUntil = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN');
-    doc.setFont("helvetica", "bold");
-    doc.text("Quotation Details:", pageWidth - margin - 60, yPos);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Date: ${new Date(customer.created_at).toLocaleDateString('en-IN')}`, pageWidth - margin - 60, yPos + 6);
-    doc.text(`Valid Until: ${validUntil}`, pageWidth - margin - 60, yPos + 12);
-    doc.text(`Person Count: ${customer.numberOfPerson}`, pageWidth - margin - 60, yPos + 18);
+const validUntil = new Date(
+  new Date(customer.created_at).getTime() + 15 * 24 * 60 * 60 * 1000
+).toLocaleDateString('en-IN');
+
+doc.setFont("helvetica", "bold");
+doc.text("Quotation Details:", pageWidth - margin - 60, yPos);
+
+doc.setFont("helvetica", "normal");
+doc.text(`Date: ${new Date(customer.created_at).toLocaleDateString('en-IN')}`, pageWidth - margin - 60, yPos + 6);
+doc.text(`Function Date: ${new Date(customer.date_of_function).toLocaleDateString('en-IN')}`, pageWidth - margin - 60, yPos + 12);
+doc.text(`Valid Until: ${validUntil}`, pageWidth - margin - 60, yPos + 18);
+doc.text(`Person Count: ${customer.numberOfPerson}`, pageWidth - margin - 60, yPos + 24);
 
     yPos += 45;
 
@@ -644,7 +649,15 @@ export default function QuotationPage() {
                       <FaUsers className="icon" />
                       <span>{quotation.numberOfPerson} persons</span>
                     </div>
+
+
+<div className="info-row">
+  <FaCalendar className="icon" />
+  <span>Function: {new Date(quotation.date_of_function).toLocaleDateString()}</span>
+</div>
                   </div>
+
+                  
 
                   <div className="card-footer">
                     <span className="item-count">
@@ -716,6 +729,9 @@ export default function QuotationPage() {
                   <div className="detail-item">
                     <strong>Persons:</strong> {selectedQuotation.numberOfPerson}
                   </div>
+                  <div className="detail-item">
+  <strong>Function Date:</strong> {new Date(selectedQuotation.date_of_function).toLocaleDateString()}
+</div>
                   <div className="detail-item">
                     <strong>Date:</strong> {new Date(selectedQuotation.created_at).toLocaleDateString()}
                   </div>
